@@ -4,7 +4,8 @@ class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      data: '旧数据'
+      data: '旧数据',
+      hasSon: true
     }
     console.log('1.创建构造函数')
   }
@@ -18,12 +19,38 @@ class App extends Component {
   }
 
   componentWillReceiveProps () {
-    console.log('组件接收到父组件的props就会被触发')
+    console.log('componentWillReceiveProps组件接收到父组件的props就会被触发')
   }
 
+  shouldComponentUpdate () {
+    console.log('shouldComponentUpdate通过return返回的布尔值判断是否组件更新')
+    return true
+  }
+
+  componentWillUpdate () {
+    console.log('componentWillUpdate组件将要更新,如果shouldComponentUpdate返回值为false将不触发')
+  }
+
+  componentDidUpdate () {
+    console.log('componentDidUpdate组件更新完成')
+
+  }
   handleClick () {
+    console.log('开始更新')
     this.setState({
       data: '新数据'
+    })
+  }
+
+  onPropsChange () {
+    console.log('更新Props')
+    this.setState({
+      data: '最新数据'
+    })
+  }
+  delComponent(){
+    this.setState({
+      hasSon: false
     })
   }
 
@@ -33,7 +60,24 @@ class App extends Component {
       <div className="App">
         <div>App</div>
         <button onClick={() => {this.handleClick()}}>更新组件</button>
+        {this.state.hasSon ? <Son data={this.state.data}/> : null}
+        <button onClick={() => {this.onPropsChange()}}>改变Props</button>
+        <button onClick={() => {this.delComponent()}}>删除子组件</button>
       </div>
+    )
+  }
+}
+
+class Son extends Component {
+  componentWillReceiveProps () {
+    console.log('componentWillReceiveProps组件接收到父组件的props就会被触发')
+  }
+  componentWillUnmount(){
+    console.log('componentWillUnmount将要销毁')
+  }
+  render () {
+    return (
+      <div>{this.props.data}</div>
     )
   }
 }

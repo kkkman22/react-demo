@@ -1,94 +1,65 @@
 import React, { Component } from 'react'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
-class App extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      data: '旧数据',
-      hasSon: true
-    }
-    console.log('1.创建构造函数')
-  }
-
-  componentWillMount () {
-    console.log('2.组件将要加载(此时页面还没有渲染,但是可以就行业务逻辑处理,比如一些异步的交互行为)')
-  }
-
-  componentDidMount () {
-    console.log('4.组件加载成功')
-  }
-
-  componentWillReceiveProps () {
-    console.log('componentWillReceiveProps组件接收到父组件的props就会被触发')
-  }
-
-  shouldComponentUpdate () {
-    console.log('shouldComponentUpdate通过return返回的布尔值判断是否组件更新')
-    return true
-  }
-
-  componentWillUpdate () {
-    console.log('componentWillUpdate组件将要更新,如果shouldComponentUpdate返回值为false将不触发')
-  }
-
-  componentDidUpdate () {
-    console.log('componentDidUpdate组件更新完成')
-
-  }
-  handleClick () {
-    console.log('开始更新')
-    this.setState({
-      data: '新数据'
-    })
-  }
-
-  onPropsChange () {
-    console.log('更新Props')
-    this.setState({
-      data: '最新数据'
-    })
-  }
-  delComponent(){
-    this.setState({
-      hasSon: false
-    })
-  }
-
+class A extends Component {
   render () {
-    console.log('3.render')
     return (
-      <div className="App">
-        <div>App</div>
-        <button onClick={() => {this.handleClick()}}>更新组件</button>
-        {this.state.hasSon ? <Son data={this.state.data}/> : null}
-        <button onClick={() => {this.onPropsChange()}}>改变Props</button>
-        <button onClick={() => {this.delComponent()}}>删除子组件</button>
+      <div>组件A</div>
+    )
+  }
+}
+
+class B extends Component {
+  render () {
+    return (
+      <div>组件B</div>
+    )
+  }
+}
+
+class C extends Component {
+
+  render()
+  {
+    return (
+      <div>
+        <Switch>
+          <Route exact path={`${this.props.match.path}`}
+                 render={() => {
+                   return (<div>不带参的组件C</div>)
+                 }}/>
+          <Route path={`${this.props.match.path}/:id`}
+                 render={(route) => {
+                   return (<div>带参的组件C{route.match.params.id}</div>)
+                 }}/>
+        </Switch>
       </div>
     )
   }
 }
 
-class Son extends Component {
-  componentWillReceiveProps () {
-    console.log('componentWillReceiveProps组件接收到父组件的props就会被触发')
-  }
-  componentWillUnmount(){
-    console.log('componentWillUnmount将要销毁')
-  }
+
+
+class App extends Component {
   render () {
-    return (
-      <div>{this.props.data}</div>
+    return (<Router>
+        <div>
+          <ul>
+            <li><Link to='/a'>A组件</Link></li>
+            <li><Link to='/b'>B组件</Link></li>
+            <li><Link to={'/c'}>C组件</Link></li>
+            <li><Link to={'/c/123'}>C组件(带参数)</Link></li>
+
+          </ul>
+          <Route path='/a' component={A}/>
+          <Route path='/b' component={B}/>
+          <Route path={'/c'} component={C}/>
+          <Route path={'/c/:id'} component={C}/>
+        </div>
+
+      </Router>
     )
   }
 }
 
 export default App
-// 生命周期节点:
-//    1. Mounting : 挂载阶段
-//    2. Updating : 运行时阶段
-//    3. Unmounting : 卸载阶段
-//    4. Error Handing : 错误处理(16版本后新增加只处理render出现的错误,逻辑错误还是抓不到的)
-
-
-
-
